@@ -8,20 +8,20 @@ A visual, interactive network architecture simulator. Drag nodes onto a canvas, 
 
 ## Features
 
-- **Visual canvas editor** — drag-and-drop nodes, draw connections, delete with the `Delete` key
-- **7 node types** — Load Balancer, App Server, Database, Cache, CDN, Message Queue, Payment Gateway
-- **Realistic service times** — log-normal distribution (empirically accurate for network/DB latency)
-- **Per-node configuration** — capacity, latency (mean + std dev), failure rate, queue timeout, cache hit rate, per-request-type processing profiles
-- **Inter-node link latency** — click any wire to add a propagation delay (e.g. 65ms cross-region)
-- **Flexible routing** — First, Round Robin, Random, or Weighted (arbitrary weights) when a node has multiple outgoing edges
-- **Fan-out / scatter-gather** — mark any node to dispatch child requests to all branches in parallel; parent completes only when every branch finishes
-- **Scheduled outages** — configure `↓ start – end` windows per node; the engine brings nodes down and back up mid-simulation
-- **Traffic control** — Poisson arrivals at a configurable rate, plus an optional burst multiplier over a time window (flash-sale simulation)
-- **Rich metrics** — total/completed/failed/timed-out counts, avg/p50/p95/p99 latency, per-node utilization bars and queue size, per-request-type breakdown
-- **Canvas overlays** — nodes display a color-coded utilization badge after every run (green < 60%, amber < 80%, red ≥ 80%)
-- **6 built-in presets** — ready-to-load architectures covering common real-world patterns
-- **JSON export** — download the full simulation summary with one click
-- **Headless CLI** — run scenarios from the terminal without the UI
+- **Visual canvas editor** - drag-and-drop nodes, draw connections, delete with the `Delete` key
+- **7 node types** - Load Balancer, App Server, Database, Cache, CDN, Message Queue, Payment Gateway
+- **Realistic service times** - log-normal distribution (empirically accurate for network/DB latency)
+- **Per-node configuration** - capacity, latency (mean + std dev), failure rate, queue timeout, cache hit rate, per-request-type processing profiles
+- **Inter-node link latency** - click any wire to add a propagation delay (e.g. 65ms cross-region)
+- **Flexible routing** - First, Round Robin, Random, or Weighted (arbitrary weights) when a node has multiple outgoing edges
+- **Fan-out / scatter-gather** - mark any node to dispatch child requests to all branches in parallel; parent completes only when every branch finishes
+- **Scheduled outages** - configure `↓ start – end` windows per node; the engine brings nodes down and back up mid-simulation
+- **Traffic control** - Poisson arrivals at a configurable rate, plus an optional burst multiplier over a time window (flash-sale simulation)
+- **Rich metrics** - total/completed/failed/timed-out counts, avg/p50/p95/p99 latency, per-node utilization bars and queue size, per-request-type breakdown
+- **Canvas overlays** - nodes display a color-coded utilization badge after every run (green < 60%, amber < 80%, red ≥ 80%)
+- **6 built-in presets** - ready-to-load architectures covering common real-world patterns
+- **JSON export** - download the full simulation summary with one click
+- **Headless CLI** - run scenarios from the terminal without the UI
 
 ---
 
@@ -87,14 +87,14 @@ cd ..
 
 You need two terminals running simultaneously.
 
-**Terminal 1 — backend**
+**Terminal 1 - backend**
 ```bash
 uvicorn backend.main:app --reload --port 8001
 ```
 
-> The API is served at `http://localhost:8001`. Port 8000 is reserved by Hyper-V on Windows; use 8001 (or any free port — update the `vite.config.ts` proxy target to match).
+> The API is served at `http://localhost:8001`. Port 8000 is reserved by Hyper-V on Windows; use 8001 (or any free port - update the `vite.config.ts` proxy target to match).
 
-**Terminal 2 — frontend**
+**Terminal 2 - frontend**
 ```bash
 cd frontend
 npm run dev
@@ -106,13 +106,13 @@ Open `http://localhost:5173` in your browser.
 
 ## Usage
 
-1. **Build an architecture** — drag node types from the left palette onto the canvas, then draw connections between them by dragging from a node's right handle to another's left handle.
-2. **Configure nodes** — click any node to open the properties panel on the right. Set capacity, latency, failure rate, timeouts, cache hit rate, outage windows, and routing strategy.
-3. **Configure edges** — click any wire to set a link latency (propagation delay in ms).
-4. **Set traffic parameters** — use the bottom bar to set request rate (req/s), simulation duration (s), random seed, and an optional burst window.
-5. **Run** — hit the **Run** button. Results appear in the panel at the bottom; nodes on the canvas update with utilization badges.
-6. **Load a preset** — use the **Load Preset** dropdown in the toolbar to instantly populate the canvas with a reference architecture.
-7. **Export** — click **Export JSON** in the results panel to download the full metrics summary.
+1. **Build an architecture** - drag node types from the left palette onto the canvas, then draw connections between them by dragging from a node's right handle to another's left handle.
+2. **Configure nodes** - click any node to open the properties panel on the right. Set capacity, latency, failure rate, timeouts, cache hit rate, outage windows, and routing strategy.
+3. **Configure edges** - click any wire to set a link latency (propagation delay in ms).
+4. **Set traffic parameters** - use the bottom bar to set request rate (req/s), simulation duration (s), random seed, and an optional burst window.
+5. **Run** - hit the **Run** button. Results appear in the panel at the bottom; nodes on the canvas update with utilization badges.
+6. **Load a preset** - use the **Load Preset** dropdown in the toolbar to instantly populate the canvas with a reference architecture.
+7. **Export** - click **Export JSON** in the results panel to download the full metrics summary.
 
 ---
 
@@ -124,7 +124,7 @@ Run predefined scenarios without the UI:
 python run_simulation.py
 ```
 
-This runs three back-to-back scenarios (normal load, high load, cached high load) and prints a formatted summary to stdout — useful for quick benchmarks or CI checks.
+This runs three back-to-back scenarios (normal load, high load, cached high load) and prints a formatted summary to stdout - useful for quick benchmarks or CI checks.
 
 ---
 

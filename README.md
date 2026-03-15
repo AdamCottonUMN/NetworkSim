@@ -1,6 +1,6 @@
 # NetworkSim
 
-A visual, interactive network architecture simulator. Drag nodes onto a canvas, wire them together, configure latency and failure rates, and run a discrete-event simulation — no code or JSON editing required.
+A visual, interactive network architecture simulator. Drag nodes onto a canvas, wire them together, configure latency and failure rates, and run a discrete-event simulation with no code or JSON editing required.
 
 ![NetworkSim screenshot](frontend/src/assets/image.png)
 

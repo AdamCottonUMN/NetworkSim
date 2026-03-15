@@ -63,7 +63,7 @@ A visual, interactive network architecture simulator. Drag nodes onto a canvas, 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/NetworkSim.git
+git clone https://github.com/AdamCottonUMN/NetworkSim.git
 cd NetworkSim
 ```
 

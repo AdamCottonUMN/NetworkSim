@@ -1,0 +1,356 @@
+{
+  "architectures": [
+    {
+      "name": "simple_web_stack",
+      "description": "Client -> Load Balancer -> App Server -> Database",
+      "entry_node_id": "lb",
+      "nodes": [
+        {
+          "id": "lb",
+          "name": "Load Balancer",
+          "capacity": 100,
+          "mean_processing_time": 0.003,
+          "std_processing_time": 0.001,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "app",
+          "name": "App Server",
+          "capacity": 20,
+          "mean_processing_time": 0.08,
+          "std_processing_time": 0.02,
+          "failure_rate": 0.01,
+          "processing_profiles": {
+            "login":      [0.12, 0.02],
+            "page_load":  [0.08, 0.015],
+            "data_fetch": [0.04, 0.01]
+          }
+        },
+        {
+          "id": "db",
+          "name": "Database",
+          "capacity": 5,
+          "mean_processing_time": 0.05,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.0,
+          "processing_profiles": {
+            "login":      [0.07, 0.01],
+            "page_load":  [0.06, 0.01],
+            "data_fetch": [0.03, 0.005]
+          }
+        }
+      ],
+      "edges": [
+        ["lb", "app"],
+        ["app", "db"]
+      ],
+      "sla": {
+        "max_avg_latency_ms": 200,
+        "max_p95_latency_ms": 350,
+        "max_p99_latency_ms": 500,
+        "max_failure_rate": 0.02,
+        "max_timed_out": 0,
+        "per_node": {
+          "app": { "max_avg_utilization": 0.8 },
+          "db":  { "max_avg_utilization": 0.8, "max_queue_size": 10 }
+        },
+        "per_type": {
+          "login":      { "max_p99_latency_ms": 600 },
+          "page_load":  { "max_p99_latency_ms": 400 },
+          "data_fetch": { "max_p99_latency_ms": 200 }
+        }
+      }
+    },
+    {
+      "name": "cached_web_stack",
+      "description": "LB -> App -> Cache (80% hit rate) -> Database. Cache hits skip the DB entirely.",
+      "entry_node_id": "lb",
+      "nodes": [
+        {
+          "id": "lb",
+          "name": "Load Balancer",
+          "capacity": 100,
+          "mean_processing_time": 0.003,
+          "std_processing_time": 0.001,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "app",
+          "name": "App Server",
+          "capacity": 20,
+          "mean_processing_time": 0.05,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.01
+        },
+        {
+          "id": "cache",
+          "name": "Cache (Redis)",
+          "capacity": 100,
+          "mean_processing_time": 0.002,
+          "std_processing_time": 0.0005,
+          "failure_rate": 0.001,
+          "hit_rate": 0.80
+        },
+        {
+          "id": "db",
+          "name": "Database",
+          "capacity": 5,
+          "mean_processing_time": 0.05,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.0
+        }
+      ],
+      "edges": [
+        ["lb",    "app"],
+        ["app",   "cache"],
+        ["cache", "db"]
+      ]
+    },
+    {
+      "name": "parallel_app_servers",
+      "description": "LB (round-robin) -> 3 App Servers -> Database. Shows horizontal scaling.",
+      "entry_node_id": "lb",
+      "nodes": [
+        {
+          "id": "lb",
+          "name": "Load Balancer",
+          "capacity": 200,
+          "mean_processing_time": 0.002,
+          "std_processing_time": 0.0005,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "app1",
+          "name": "App Server 1",
+          "capacity": 10,
+          "mean_processing_time": 0.08,
+          "std_processing_time": 0.02,
+          "failure_rate": 0.01
+        },
+        {
+          "id": "app2",
+          "name": "App Server 2",
+          "capacity": 10,
+          "mean_processing_time": 0.08,
+          "std_processing_time": 0.02,
+          "failure_rate": 0.01
+        },
+        {
+          "id": "app3",
+          "name": "App Server 3",
+          "capacity": 10,
+          "mean_processing_time": 0.08,
+          "std_processing_time": 0.02,
+          "failure_rate": 0.01
+        },
+        {
+          "id": "db",
+          "name": "Database",
+          "capacity": 10,
+          "mean_processing_time": 0.05,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.0
+        }
+      ],
+      "edges": [
+        ["lb",   "app1"],
+        ["lb",   "app2"],
+        ["lb",   "app3"],
+        ["app1", "db"],
+        ["app2", "db"],
+        ["app3", "db"]
+      ],
+      "routing": {
+        "lb": { "strategy": "round_robin" }
+      }
+    },
+    {
+      "name": "microservices",
+      "description": "API Gateway -> Auth Service -> Business Logic -> Database",
+      "entry_node_id": "gateway",
+      "nodes": [
+        {
+          "id": "gateway",
+          "name": "API Gateway",
+          "capacity": 200,
+          "mean_processing_time": 0.002,
+          "std_processing_time": 0.0005,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "auth",
+          "name": "Auth Service",
+          "capacity": 30,
+          "mean_processing_time": 0.015,
+          "std_processing_time": 0.005,
+          "failure_rate": 0.005
+        },
+        {
+          "id": "logic",
+          "name": "Business Logic",
+          "capacity": 15,
+          "mean_processing_time": 0.1,
+          "std_processing_time": 0.02,
+          "failure_rate": 0.01
+        },
+        {
+          "id": "db",
+          "name": "Database",
+          "capacity": 5,
+          "mean_processing_time": 0.04,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.0
+        }
+      ],
+      "edges": [
+        ["gateway", "auth"],
+        ["auth",    "logic"],
+        ["logic",   "db"]
+      ]
+    },
+    {
+      "name": "ecommerce_storefront",
+      "description": "E-commerce storefront: CDN -> LB -> 2 Web Servers -> Redis -> API Server -> PostgreSQL / Payment Gateway (weighted 90/10). Run at 300 req/s; use burst x5 (t=10-20s) to simulate a flash sale.",
+      "entry_node_id": "cdn",
+      "nodes": [
+        {
+          "id": "cdn",
+          "name": "CDN",
+          "capacity": 500,
+          "mean_processing_time": 0.0005,
+          "std_processing_time": 0.0001,
+          "failure_rate": 0.0,
+          "hit_rate": 0.60
+        },
+        {
+          "id": "lb",
+          "name": "Load Balancer",
+          "capacity": 200,
+          "mean_processing_time": 0.001,
+          "std_processing_time": 0.0002,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "web1",
+          "name": "Web Server 1",
+          "capacity": 40,
+          "mean_processing_time": 0.015,
+          "std_processing_time": 0.005,
+          "failure_rate": 0.002
+        },
+        {
+          "id": "web2",
+          "name": "Web Server 2",
+          "capacity": 40,
+          "mean_processing_time": 0.015,
+          "std_processing_time": 0.005,
+          "failure_rate": 0.002
+        },
+        {
+          "id": "redis",
+          "name": "Redis Cache",
+          "capacity": 200,
+          "mean_processing_time": 0.002,
+          "std_processing_time": 0.0005,
+          "failure_rate": 0.0,
+          "hit_rate": 0.50
+        },
+        {
+          "id": "api",
+          "name": "API Server",
+          "capacity": 12,
+          "mean_processing_time": 0.04,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.005,
+          "timeout": 1.0
+        },
+        {
+          "id": "db",
+          "name": "PostgreSQL",
+          "capacity": 5,
+          "mean_processing_time": 0.025,
+          "std_processing_time": 0.008,
+          "failure_rate": 0.0,
+          "timeout": 2.0
+        },
+        {
+          "id": "payment",
+          "name": "Payment Gateway",
+          "capacity": 15,
+          "mean_processing_time": 0.3,
+          "std_processing_time": 0.05,
+          "failure_rate": 0.01,
+          "timeout": 5.0
+        }
+      ],
+      "edges": [
+        ["cdn",   "lb"],
+        ["lb",    "web1"],
+        ["lb",    "web2"],
+        ["web1",  "redis"],
+        ["web2",  "redis"],
+        ["redis", "api"],
+        ["api",   "db"],
+        ["api",   "payment"]
+      ],
+      "routing": {
+        "lb":  { "strategy": "round_robin" },
+        "api": { "strategy": "weighted", "weights": { "db": 9, "payment": 1 } }
+      }
+    },
+    {
+      "name": "scatter_gather_api",
+      "description": "API Gateway fans out to Auth + Product services in parallel (scatter-gather). The parent request resolves only when both branches complete. Run at 100 req/s to see fan-out latency = max(auth_path, product_path).",
+      "entry_node_id": "gateway",
+      "nodes": [
+        {
+          "id": "gateway",
+          "name": "API Gateway",
+          "capacity": 200,
+          "mean_processing_time": 0.002,
+          "std_processing_time": 0.0005,
+          "failure_rate": 0.0,
+          "fan_out": true
+        },
+        {
+          "id": "auth",
+          "name": "Auth Service",
+          "capacity": 50,
+          "mean_processing_time": 0.02,
+          "std_processing_time": 0.005,
+          "failure_rate": 0.005
+        },
+        {
+          "id": "product",
+          "name": "Product Service",
+          "capacity": 30,
+          "mean_processing_time": 0.04,
+          "std_processing_time": 0.01,
+          "failure_rate": 0.005
+        },
+        {
+          "id": "auth_db",
+          "name": "Auth DB",
+          "capacity": 10,
+          "mean_processing_time": 0.01,
+          "std_processing_time": 0.003,
+          "failure_rate": 0.0
+        },
+        {
+          "id": "product_db",
+          "name": "Product DB",
+          "capacity": 8,
+          "mean_processing_time": 0.03,
+          "std_processing_time": 0.008,
+          "failure_rate": 0.0
+        }
+      ],
+      "edges": [
+        ["gateway",  "auth"],
+        ["gateway",  "product"],
+        ["auth",     "auth_db"],
+        ["product",  "product_db"]
+      ]
+    }
+  ]
+}
